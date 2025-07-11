@@ -15,13 +15,15 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String
-  role      Role
-  orders    Order[]
-  createdAt DateTime @default(now())
+  id              Int              @id @default(autoincrement())
+  email           String           @unique
+  passwordHash    String           @default("")
+  role            Role
+  orders          Order[]
+  inventoryActions InventoryAction[]
+  suppliedProducts Product[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @default(now())
 }
 
 enum Role {
@@ -31,30 +33,40 @@ enum Role {
 }
 
 model Product {
-  id          Int         @id @default(autoincrement())
-  name        String
-  description String?
-  price       Float
-  inventory   Inventory?
-  orders      Order[]
-  createdAt   DateTime    @default(now())
+  id              Int              @id @default(autoincrement())
+  name            String
+  barcode         String           @unique
+  stock           Int              @default(0)
+  supplierId      Int
+  supplier        User             @relation(fields: [supplierId], references: [id])
+  orders          Order[]
+  inventoryActions InventoryAction[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
 }
 
 model Order {
   id         Int       @id @default(autoincrement())
-  user       User      @relation(fields: [userId], references: [id])
-  userId     Int
   product    Product   @relation(fields: [productId], references: [id])
   productId  Int
+  sellerId   Int
+  seller     User      @relation(fields: [sellerId], references: [id])
   quantity   Int
-  total      Float
-  createdAt  DateTime  @default(now())
+  timestamp  DateTime  @default(now())
 }
 
-model Inventory {
+model InventoryAction {
   id         Int      @id @default(autoincrement())
   product    Product  @relation(fields: [productId], references: [id])
-  productId  Int      @unique
-  quantity   Int
-  updatedAt  DateTime @updatedAt
+  productId  Int
+  delta      Int
+  type       InventoryActionType
+  actorId    Int
+  actor      User     @relation(fields: [actorId], references: [id])
+  timestamp  DateTime @default(now())
+}
+
+enum InventoryActionType {
+  IN
+  OUT
 }

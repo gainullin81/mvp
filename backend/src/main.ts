@@ -5,6 +5,12 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // Включаем CORS для всех источников (или укажи origin, если нужно)
+  app.enableCors({
+    origin: '*', // или ['http://localhost:61034'] для безопасности
+    credentials: true,
+  });
+
   const config = new DocumentBuilder()
     .setTitle('Fixer API')
     .setDescription('API documentation for Fixer')
