@@ -6,17 +6,16 @@ export class ReportsService {
   private prisma = new PrismaClient();
 
   async getSalesReport() {
-    // Пример: сумма всех продаж
+    // Пример: количество всех продаж
     return this.prisma.order.aggregate({
-      _sum: { total: true },
       _count: { id: true },
     });
   }
 
-  async getInventoryReport() {
-    // Пример: остатки по всем товарам
-    return this.prisma.inventory.findMany({
-      include: { product: true },
+  async getInventoryActionsReport() {
+    // Пример: все действия с инвентарём
+    return this.prisma.inventoryAction.findMany({
+      include: { product: true, actor: true },
     });
   }
 } 

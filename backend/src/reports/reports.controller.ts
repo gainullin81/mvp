@@ -11,7 +11,7 @@ export class ReportsController {
   }
 
   @Get('inventory')
-  async getInventoryReport() {
-    return this.reportsService.getInventoryReport();
+  async getInventoryActionsReport() {
+    return this.reportsService.getInventoryActionsReport();
   }
 } 
